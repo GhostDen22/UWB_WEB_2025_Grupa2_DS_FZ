@@ -1,1 +1,2 @@
-# UWB_WEB_2025_Grupa2_DS_FZ
+Daniel Šapovalov
+Fabian Žavoronok
