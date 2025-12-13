@@ -1,3 +1,112 @@
 {
-  "posts": [ "hello world" ]
+    "products": [
+    {
+      "Id": 1,
+      "Name": "Eco Water Bottle",
+      "Description": "Reusable stainless steel water bottle, 500ml.",
+      "Image": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" style=\"background-color: #e0f7fa; border-radius: 8px;\"><circle cx=\"38\" cy=\"15\" r=\"7\" fill=\"#FFD700\" stroke=\"#FFA500\" stroke-width=\"1\"/><path d=\"M0 50 L18 20 L36 50 Z\" fill=\"#9E9E9E\" stroke=\"#757575\" stroke-width=\"1\"/><path d=\"M25 50 L40 28 L55 50 Z\" fill=\"#757575\" stroke=\"#616161\" stroke-width=\"1\"/></svg>",
+      "Qty": 120,
+      "Price": 15.99
+    },
+    {
+      "Id": 2,
+      "Name": "Wireless Mouse",
+      "Description": "Ergonomic wireless mouse with USB receiver.",
+      "Image": "<svg width='50' height='50'><rect width='40' height='30' x='5' y='10' fill='#2196F3'/></svg>",
+      "Qty": 75,
+      "Price": 22.5
+    },
+    {
+      "Id": 3,
+      "Name": "Bluetooth Speaker",
+      "Description": "Portable Bluetooth speaker with 10h battery life.",
+      "Image": "<svg width='50' height='50'><ellipse cx='25' cy='25' rx='20' ry='10' fill='#FFC107'/></svg>",
+      "Qty": 60,
+      "Price": 35.00
+    },
+    {
+      "Id": 4,
+      "Name": "Notebook",
+      "Description": "A5 lined notebook, 200 pages.",
+      "Image": "<svg width='50' height='50'><rect width='30' height='40' x='10' y='5' fill='#9C27B0'/></svg>",
+      "Qty": 200,
+      "Price": 6.75
+    },
+    {
+      "Id": 5,
+      "Name": "Desk Lamp",
+      "Description": "LED desk lamp with adjustable brightness.",
+      "Image": "<svg width='50' height='50'><polygon points='25,5 45,45 5,45' fill='#FF5722'/></svg>",
+      "Qty": 40,
+      "Price": 28.99
+    },
+    {
+      "Id": 6,
+      "Name": "USB Flash Drive",
+      "Description": "32GB USB 3.0 flash drive.",
+      "Image": "<svg width='50' height='50'><rect width='20' height='40' x='15' y='5' fill='#607D8B'/></svg>",
+      "Qty": 150,
+      "Price": 12.00
+    },
+    {
+      "Id": 7,
+      "Name": "Coffee Mug",
+      "Description": "Ceramic mug, 350ml, dishwasher safe.",
+      "Image": "<svg width='50' height='50'><circle cx='25' cy='30' r='15' fill='#795548'/></svg>",
+      "Qty": 90,
+      "Price": 8.50
+    },
+    {
+      "Id": 8,
+      "Name": "Fitness Tracker",
+      "Description": "Waterproof fitness tracker with heart rate monitor.",
+      "Image": "<svg width='50' height='50'><rect width='35' height='15' x='7.5' y='17.5' fill='#00BCD4'/></svg>",
+      "Qty": 55,
+      "Price": 49.99
+    },
+    {
+      "Id": 9,
+      "Name": "Wireless Charger",
+      "Description": "Fast wireless charging pad for smartphones.",
+      "Image": "<svg width='50' height='50'><circle cx='25' cy='25' r='22' fill='#E91E63'/></svg>",
+      "Qty": 58,
+      "Price": 19.99
+    },
+    {
+      "Id": 10,
+      "Name": "Travel Backpack",
+      "Description": "Lightweight backpack with multiple compartments.",
+      "Image": "<svg width='50' height='50'><rect width='30' height='40' x='10' y='5' fill='#8BC34A'/></svg>",
+      "Qty": 25,
+      "Price": 59.00
+    }
+  ],
+  "orders": [
+    {
+      "Id": "a7897d04-2010-4c97-ad7d-ecf03bb994e9",
+      "Date": "2025-12-02T17:19:55.040Z",
+      "Status": "New",
+      "products": [
+        {
+          "Id": 9,
+          "Name": "Wireless Charger",
+          "Qty": 7,
+          "Price": 19.99
+        }
+      ]
+    },
+    {
+      "Id": "148bf781-08c4-41c9-b281-47d1caadc399",
+      "Date": "2025-12-02T17:20:09.127Z",
+      "Status": "Pending",
+      "products": [
+        {
+          "Id": 10,
+          "Name": "Travel Backpack",
+          "Qty": 10,
+          "Price": 59.00
+        }
+      ]
+    }
+  ]
 }

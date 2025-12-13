@@ -1,30 +1,28 @@
-const express = require('express');
+const dbAdapter = require('lowdb/node')
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const port = 5000
 
-const app = express();
-const PORT = 5000;
+app.use(bodyParser.json());
+app.use(cors());
 
-app.get('/users-list', (req, res) => {
-    console.log('list request')
-    // Get complete list of users
-    const usersList = [];
+app.get('/', (req, res) => {
+    res.send('Default Endpoint')
+})
 
-    // Send the usersList as a response to the client
-    res.send(usersList);
-});
+app.get('/products', async (req, res) => {
+    const db = await dbAdapter.JSONFilePreset('db.json', {
+        products: [], orders: []
+    });
+    
+    const databaseTables = db.data;
+    const products = databaseTables.products
 
-app.post('/users-list', (req, res) => {
-    console.log('list request')
-    // Get complete list of users
-    const usersList = [];
+    res.send(products)
+})
 
-    // Send the usersList as a response to the client
-    res.send(usersList);
-});
-
-app.listen(PORT, (error) => {
-    if (!error)
-        console.log("Server is Successfully Running, and App is listening on port " + PORT);
-    else
-        console.log("Error occurred, server can't start", error);
-}
-);
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
