@@ -1,5 +1,5 @@
 {
-    "products": [
+  "products": [
     {
       "Id": 1,
       "Name": "Eco Water Bottle",
@@ -13,7 +13,7 @@
       "Name": "Wireless Mouse",
       "Description": "Ergonomic wireless mouse with USB receiver.",
       "Image": "<svg width='50' height='50'><rect width='40' height='30' x='5' y='10' fill='#2196F3'/></svg>",
-      "Qty": 75,
+      "Qty": 73,
       "Price": 22.5
     },
     {
@@ -21,8 +21,8 @@
       "Name": "Bluetooth Speaker",
       "Description": "Portable Bluetooth speaker with 10h battery life.",
       "Image": "<svg width='50' height='50'><ellipse cx='25' cy='25' rx='20' ry='10' fill='#FFC107'/></svg>",
-      "Qty": 60,
-      "Price": 35.00
+      "Qty": 54,
+      "Price": 35
     },
     {
       "Id": 4,
@@ -46,7 +46,7 @@
       "Description": "32GB USB 3.0 flash drive.",
       "Image": "<svg width='50' height='50'><rect width='20' height='40' x='15' y='5' fill='#607D8B'/></svg>",
       "Qty": 150,
-      "Price": 12.00
+      "Price": 12
     },
     {
       "Id": 7,
@@ -54,7 +54,7 @@
       "Description": "Ceramic mug, 350ml, dishwasher safe.",
       "Image": "<svg width='50' height='50'><circle cx='25' cy='30' r='15' fill='#795548'/></svg>",
       "Qty": 90,
-      "Price": 8.50
+      "Price": 8.5
     },
     {
       "Id": 8,
@@ -78,7 +78,7 @@
       "Description": "Lightweight backpack with multiple compartments.",
       "Image": "<svg width='50' height='50'><rect width='30' height='40' x='10' y='5' fill='#8BC34A'/></svg>",
       "Qty": 25,
-      "Price": 59.00
+      "Price": 59
     }
   ],
   "orders": [
@@ -104,7 +104,33 @@
           "Id": 10,
           "Name": "Travel Backpack",
           "Qty": 10,
-          "Price": 59.00
+          "Price": 59
+        }
+      ]
+    },
+    {
+      "id": "bce98912-172f-46f5-a80e-145fa091e3b1",
+      "date": "2025-12-13T13:08:53.849Z",
+      "status": "new",
+      "totalPrice": 255,
+      "products": [
+        {
+          "Id": 2,
+          "Name": "Wireless Mouse",
+          "Description": "Ergonomic wireless mouse with USB receiver.",
+          "Image": "<svg width='50' height='50'><rect width='40' height='30' x='5' y='10' fill='#2196F3'/></svg>",
+          "Qty": 75,
+          "Price": 22.5,
+          "count": 2
+        },
+        {
+          "Id": 3,
+          "Name": "Bluetooth Speaker",
+          "Description": "Portable Bluetooth speaker with 10h battery life.",
+          "Image": "<svg width='50' height='50'><ellipse cx='25' cy='25' rx='20' ry='10' fill='#FFC107'/></svg>",
+          "Qty": 60,
+          "Price": 35,
+          "count": 6
         }
       ]
     }
