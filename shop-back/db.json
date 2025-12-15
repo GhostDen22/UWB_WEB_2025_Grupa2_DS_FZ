@@ -5,7 +5,7 @@
       "Name": "Eco Water Bottle",
       "Description": "Reusable stainless steel water bottle, 500ml.",
       "Image": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" style=\"background-color: #e0f7fa; border-radius: 8px;\"><circle cx=\"38\" cy=\"15\" r=\"7\" fill=\"#FFD700\" stroke=\"#FFA500\" stroke-width=\"1\"/><path d=\"M0 50 L18 20 L36 50 Z\" fill=\"#9E9E9E\" stroke=\"#757575\" stroke-width=\"1\"/><path d=\"M25 50 L40 28 L55 50 Z\" fill=\"#757575\" stroke=\"#616161\" stroke-width=\"1\"/></svg>",
-      "Qty": 120,
+      "Qty": 116,
       "Price": 15.99
     },
     {
@@ -131,6 +131,23 @@
           "Qty": 60,
           "Price": 35,
           "count": 6
+        }
+      ]
+    },
+    {
+      "id": "e8a5f363-b94e-47b0-8148-55883cd4bdd4",
+      "date": "2025-12-15T13:38:18.645Z",
+      "status": "new",
+      "totalPrice": 63.96,
+      "products": [
+        {
+          "Id": 1,
+          "Name": "Eco Water Bottle",
+          "Description": "Reusable stainless steel water bottle, 500ml.",
+          "Image": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" style=\"background-color: #e0f7fa; border-radius: 8px;\"><circle cx=\"38\" cy=\"15\" r=\"7\" fill=\"#FFD700\" stroke=\"#FFA500\" stroke-width=\"1\"/><path d=\"M0 50 L18 20 L36 50 Z\" fill=\"#9E9E9E\" stroke=\"#757575\" stroke-width=\"1\"/><path d=\"M25 50 L40 28 L55 50 Z\" fill=\"#757575\" stroke=\"#616161\" stroke-width=\"1\"/></svg>",
+          "Qty": 120,
+          "Price": 15.99,
+          "count": 4
         }
       ]
     }
