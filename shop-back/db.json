@@ -13,7 +13,7 @@
       "Name": "Wireless Mouse",
       "Description": "Ergonomic wireless mouse with USB receiver.",
       "Image": "<svg width='50' height='50'><rect width='40' height='30' x='5' y='10' fill='#2196F3'/></svg>",
-      "Qty": 73,
+      "Qty": 72,
       "Price": 22.5
     },
     {
@@ -37,7 +37,7 @@
       "Name": "Desk Lamp",
       "Description": "LED desk lamp with adjustable brightness.",
       "Image": "<svg width='50' height='50'><polygon points='25,5 45,45 5,45' fill='#FF5722'/></svg>",
-      "Qty": 39,
+      "Qty": 38,
       "Price": 28.99
     },
     {
@@ -152,28 +152,28 @@
       ]
     },
     {
-      "id": "994dd2a1-d397-400a-93d0-56acee432a6f",
-      "date": "2026-01-11T15:10:59.589Z",
+      "id": "034cbcaa-f436-4186-bf97-ed8e69a8d9b5",
+      "date": "2026-01-11T16:55:49.119Z",
       "status": "new",
-      "totalPrice": 55.989999999999995,
+      "totalPrice": 51.49,
       "products": [
+        {
+          "Id": 2,
+          "Name": "Wireless Mouse",
+          "Description": "Ergonomic wireless mouse with USB receiver.",
+          "Image": "<svg width='50' height='50'><rect width='40' height='30' x='5' y='10' fill='#2196F3'/></svg>",
+          "Qty": 73,
+          "Price": 22.5,
+          "count": 1
+        },
         {
           "Id": 5,
           "Name": "Desk Lamp",
           "Description": "LED desk lamp with adjustable brightness.",
           "Image": "<svg width='50' height='50'><polygon points='25,5 45,45 5,45' fill='#FF5722'/></svg>",
-          "Qty": 40,
+          "Qty": 39,
           "Price": 28.99,
           "count": 1
-        },
-        {
-          "Id": 4,
-          "Name": "Notebook",
-          "Description": "A5 lined notebook, 200 pages.",
-          "Image": "<svg width='50' height='50'><rect width='30' height='40' x='10' y='5' fill='#9C27B0'/></svg>",
-          "Qty": 200,
-          "Price": 6.75,
-          "count": 4
         }
       ]
     }

@@ -63,7 +63,7 @@ app.post('/orders', async (req, res) => {
         id: crypto.randomUUID(), 
         date: new Date().toISOString(), 
         status: "new", 
-        totalPrice: cart.reduce((sum, item) => sum + (Number(item.Price) * item.count), 0),
+        totalPrice: Number(cart.reduce((sum, item) => sum + (Number(item.Price) * item.count), 0).toFixed(2)),
         products: cart 
     };
 
