@@ -1,265 +1,213 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { ShopProvider, useShop } from './ShopContext';
 import './style.css';
 
-// --- KARTA PRODUKTU (Bez większych zmian, tylko logika dodawania) ---
-const ProductCard = ({ product, cart, onAddToCart }) => {
+const ProductCard = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
-
+  const { addToCart, cart } = useShop();
   const handleAddClick = () => {
-    // Sprawdzamy, ile TEGO produktu jest już w koszyku
     const existingItem = cart.find(item => item.Id === product.Id);
-    const currentQtyInCart = existingItem ? existingItem.count : 0;
-
-    const totalRequested = currentQtyInCart + Number(quantity);
-
-    if (totalRequested > product.Qty) {
-      alert(`Błąd! Mamy tylko ${product.Qty} sztuk tego towaru. Masz już ${currentQtyInCart} w koszyku.`);
+    const currentInCart = existingItem ? existingItem.count : 0;
+    if (currentInCart + Number(quantity) > product.Qty) {
+      alert("Brak wystarczającej ilości w magazynie!");
       return;
     }
-
-    if (quantity < 1) {
-      alert("Musisz wybrać przynajmniej 1 sztukę.");
-      return;
-    }
-
-    onAddToCart(product, Number(quantity));
+    addToCart(product, Number(quantity));
     setQuantity(1);
   };
-
   return (
     <div className="product-card">
       <h3>{product.Name}</h3>
       <div className="product-image" dangerouslySetInnerHTML={{ __html: product.Image }} />
       <p className="product-description">{product.Description}</p>
-      <p style={{ color: '#666', fontSize: '12px', margin: '5px 0' }}>
-        Dostępne: <strong>{product.Qty}</strong> szt.
-      </p>
-      <p className="product-price">{Number(product.Price).toFixed(2)} zł</p>
-
-      <div style={{ display: 'flex', gap: '5px', justifyContent: 'center', marginBottom: '10px' }}>
-        <input
-          type="number"
-          min="1"
-          max={product.Qty}
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-          style={{ width: '50px', padding: '5px', textAlign: 'center' }}
-        />
-        <button className="add-btn" onClick={handleAddClick}>
-          Dodaj
-        </button>
+      <p>Dostępne: <strong>{product.Qty}</strong></p>
+      <p className="product-price">{Number(product.Price).toFixed(2)} €</p>
+      <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+        <input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} style={{ width: '50px' }} />
+        <button className="add-btn" onClick={handleAddClick}>Dodaj</button>
       </div>
     </div>
   );
 };
 
-function App() {
-  const [products, setProducts] = useState([]);
+const Orders = () => {
+  const { orders } = useShop();
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
 
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('shopping-cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  return (
+    <div className="orders-container" style={{ maxWidth: '1100px', margin: '40px auto', padding: '0 20px' }}>
+      <h2 style={{ textAlign: 'left', marginBottom: '10px', fontSize: '28px', fontWeight: 'bold' }}>Twoje Zamówienia</h2>
 
-  const [showCart, setShowCart] = useState(false);
-  const [notification, setNotification] = useState(null);
+      <div style={{ display: 'block' }}>
+        <hr style={{ border: 'none', borderTop: '3px solid #000', margin: '0 0 20px 0', opacity: 1 }} />
 
-  useEffect(() => {
-    localStorage.setItem('shopping-cart', JSON.stringify(cart));
-  }, [cart]);
+        {orders.length === 0 ? (
+          <p>Brak zamówień.</p>
+        ) : (
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {orders.map((order) => (
+              <li key={order.id} style={{ borderBottom: '1px solid #eee', padding: '10px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', cursor: 'pointer' }}
+                  onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}>
 
-  useEffect(() => {
-    fetch('http://localhost:5000/products')
-      .then(response => response.json())
-      .then(data => setProducts(data))
-      .catch(error => console.error('Błąd:', error));
-  }, []);
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '18px' }}>{order.title}</div>
+                    <div style={{ fontSize: '13px', color: '#888' }}>ID transakcji: {order.id}</div>
+                    <button style={{ background: 'none', border: 'none', color: '#007bff', padding: 0, cursor: 'pointer', fontSize: '13px', marginTop: '5px' }}>
+                      {expandedOrderId === order.id ? '↑ Ukryj szczegóły' : '↓ Pokaż szczegóły'}
+                    </button>
+                  </div>
 
-  const showNotificationMessage = (message) => {
-    setNotification(message);
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
-  };
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                      Razem: {Number(order.price).toFixed(2)} €
+                    </span>
+                  </div>
+                </div>
 
-  // --- NOWA FUNKCJA: DODAWANIE Z GRUPOWANIEM ---
-  const addToCart = (product, quantity) => {
-    // Sprawdzamy, czy produkt już jest w koszyku
-    const existingItemIndex = cart.findIndex(item => item.Id === product.Id);
+                {expandedOrderId === order.id && (
+                  <div style={{ backgroundColor: '#f9f9f9', padding: '20px', marginTop: '10px', borderRadius: '8px', border: '1px solid #eee' }}>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                      {order.items && order.items.map((item, idx) => (
+                        <li key={idx} style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '15px 0',
+                          borderBottom: idx !== order.items.length - 1 ? '1px solid #ddd' : 'none'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flex: 1 }}>
+                            <div style={{
+                              width: '60px',
+                              height: '60px',
+                              flexShrink: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              overflow: 'hidden'
+                            }}
+                              dangerouslySetInnerHTML={{ __html: item.Image }} />
+                            <div style={{ textAlign: 'left' }}>
+                              <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{item.Name}</div>
+                              <div style={{ fontSize: '12px', color: '#888' }}>Cena jedn.: {Number(item.Price).toFixed(2)} €</div>
+                            </div>
+                          </div>
 
-    if (existingItemIndex !== -1) {
-      // SCENARIUSZ A: Produkt już jest -> Zwiększamy jego 'count'
-      const updatedCart = [...cart];
-      updatedCart[existingItemIndex].count += quantity;
-      setCart(updatedCart);
-    } else {
-      // SCENARIUSZ B: Produktu nie ma -> Dodajemy nowy obiekt z polem 'count'
-      // Tworzymy nowy obiekt, żeby nie modyfikować oryginału (best practice)
-      const newItem = { ...product, count: quantity };
-      setCart([...cart, newItem]);
-    }
+                          <div style={{ display: 'flex', alignItems: 'center', textAlign: 'right' }}>
+                            <div style={{ width: '100px', fontSize: '15px', textAlign: 'left' }}>
+                              Ilość: <strong>{item.count}</strong>
+                            </div>
+                            <div style={{ width: '150px' }}>
+                              <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                Razem: {(item.Price * item.count).toFixed(2)} €
+                              </span>
+                            </div>
+                            <div style={{ width: '10px' }}></div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
 
-    showNotificationMessage(`Dodano do koszyka: ${product.Name} (${quantity} szt.)`);
-  };
+const CartView = () => {
+  const { cart, totalSum, updateCartQuantity, removeFromCart, handlePlaceOrder } = useShop();
+  const navigate = useNavigate();
 
-  // --- NOWA FUNKCJA: EDYCJA ILOŚCI W KOSZYKU ---
-  const updateCartQuantity = (index, newQuantity) => {
-    const item = cart[index];
-    const parsedQty = Number(newQuantity);
+  return (
+    <div className="cart-container" style={{ maxWidth: '1100px', margin: '40px auto', padding: '0 20px' }}>
+      <h2 style={{ textAlign: 'left', marginBottom: '10px', fontSize: '28px', fontWeight: 'bold' }}>Twój Koszyk</h2>
+      {cart.length === 0 ? <p>Koszyk jest pusty...</p> : (
+        <div style={{ display: 'block' }}>
+          <hr style={{ border: 'none', borderTop: '3px solid #000', margin: '0 0 20px 0', opacity: 1 }} />
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {cart.map((item, index) => (
+              <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 0', borderBottom: '1px solid #eee' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', minWidth: '350px' }}>
+                  <div style={{ width: '60px', height: '60px', flexShrink: 0, display: 'flex', alignItems: 'center' }} dangerouslySetInnerHTML={{ __html: item.Image }} />
+                  <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '18px' }}>{item.Name}</div>
+                    <div style={{ fontSize: '13px', color: '#888' }}>Cena jedn.: {Number(item.Price).toFixed(2)} €</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+                  <div style={{ width: '100px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>Ilość:</span>
+                    <input type="number" value={item.count} min="1" max={item.Qty} onChange={(e) => updateCartQuantity(index, e.target.value)} style={{ width: '50px', textAlign: 'center' }} />
+                  </div>
+                  <div style={{ width: '140px', textAlign: 'left', paddingLeft: '15px' }}>
+                    <span style={{ fontWeight: 'bold' }}>Razem: {(item.Price * item.count).toFixed(2)} €</span>
+                  </div>
+                  <div style={{ width: '90px', textAlign: 'right' }}>
+                    <button className="remove-btn" onClick={() => removeFromCart(index)} style={{ backgroundColor: '#d9534f', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>Usuń</button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div style={{ textAlign: 'right', marginTop: '40px' }}>
+            <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Do zapłaty: {totalSum.toFixed(2)} €</h3>
+            <button className="checkout-btn" onClick={() => handlePlaceOrder(() => navigate('/orders'))} style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '15px 50px', borderRadius: '6px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>Złóż zamówienie</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
-    // Walidacja 1: Nie mniej niż 1
-    if (parsedQty < 1) return;
+function AppContent() {
+  const { notification, totalItemsCount, products } = useShop();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    // Walidacja 2: Nie więcej niż stan magazynowy
-    if (parsedQty > item.Qty) {
-      alert(`Mamy tylko ${item.Qty} sztuk tego produktu w magazynie!`);
-      return; // Przerywamy, nie aktualizujemy
-    }
-
-    // Aktualizacja stanu
-    const updatedCart = [...cart];
-    updatedCart[index].count = parsedQty;
-    setCart(updatedCart);
-  };
-
-  const removeFromCart = (indexToRemove) => {
-    setCart(cart.filter((_, index) => index !== indexToRemove));
-  };
-
-  // --- FUNKCJA WYSYŁANIA ZAMÓWIENIA ---
-  const handlePlaceOrder = () => {
-    // Proste zabezpieczenie
-    if (cart.length === 0) return;
-
-    // Wysyłamy zapytanie POST do serwera
-    fetch('http://localhost:5000/orders', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Mówimy serwerowi: "wysyłam JSON"
-      },
-      body: JSON.stringify(cart), // Pakujemy nasz koszyk do paczki
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          // Jeśli serwer zgłosił błąd (np. brak towaru), rzuć wyjątek
-          const errData = await response.json();
-          throw new Error(errData.error || 'Błąd zamówienia');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // SUKCES!
-        showNotificationMessage(`Sukces! Zamówienie nr ${data.orderId} zostało złożone.`);
-
-        // 1. Wyczyść koszyk w stanie
-        setCart([]);
-        // 2. Wyczyść koszyk w pamięci przeglądarki
-        localStorage.removeItem('shopping-cart');
-        // 3. Zamknij widok koszyka (wróć do sklepu)
-        setShowCart(false);
-
-        // 4. Odśwież listę produktów (żeby zobaczyć zaktualizowane stany magazynowe!)
-        return fetch('http://localhost:5000/products');
-      })
-      .then(res => res.json())
-      .then(updatedProducts => setProducts(updatedProducts)) // Zaktualizuj widok produktów
-      .catch((error) => {
-        alert(error.message); // Wyświetl alert z błędem (np. "Brak towaru")
-      });
-  };
-  // --- NOWE LICZENIE SUMY: Cena * Ilość (count) ---
-  const totalSum = cart.reduce((sum, item) => sum + (Number(item.Price) * item.count), 0);
-  // Liczymy też łączną ilość produktów do wyświetlenia na przycisku
-  const totalItemsCount = cart.reduce((sum, item) => sum + item.count, 0);
+  const isCart = location.pathname === '/cart';
+  const isOrders = location.pathname === '/orders';
 
   return (
     <div className="App">
-
-      {notification && (
-        <div className="notification">
-          {notification}
-        </div>
-      )}
-
+      {notification && <div className="notification">{notification}</div>}
       <header className="App-header">
         <h1>Mój Sklep</h1>
-        <button
-          className="cart-toggle-btn"
-          onClick={() => setShowCart(!showCart)}
-        >
-          {showCart ? 'Wróć do Sklepu' : `Koszyk (${totalItemsCount})`}
-        </button>
+        <div style={{ display: 'flex', gap: '15px' }}>
+
+          {!isCart && !isOrders ? (
+            <>
+              <button className="cart-toggle-btn" onClick={() => navigate('/orders')}>
+                Moje Zamówienia
+              </button>
+              <button className="cart-toggle-btn" onClick={() => navigate('/cart')}>
+                Koszyk ({totalItemsCount})
+              </button>
+            </>
+          ) : (
+            <button className="cart-toggle-btn" onClick={() => navigate('/')}>
+              Wróć do Sklepu
+            </button>
+          )}
+
+        </div>
       </header>
 
       <main className="main-content">
-        {!showCart && (
-          <div className="products-container">
-            {products.map((product) => (
-              <ProductCard
-                key={product.Id}
-                product={product}
-                cart={cart}
-                onAddToCart={addToCart}
-              />
-            ))}
-          </div>
-        )}
-
-        {showCart && (
-          <div className="cart-container">
-            <h2>Twój Koszyk</h2>
-            {cart.length === 0 ? (
-              <p>Koszyk jest pusty...</p>
-            ) : (
-              <div>
-                <ul className="cart-list">
-                  {cart.map((item, index) => (
-                    <li key={index} className="cart-item">
-                      <div className="cart-item-info">
-                        <div className="cart-item-image" dangerouslySetInnerHTML={{ __html: item.Image }} />
-                        <div>
-                          <span style={{ fontWeight: 'bold', display: 'block' }}>{item.Name}</span>
-                          <span style={{ fontSize: '12px', color: '#888' }}>Cena jedn.: {Number(item.Price).toFixed(2)} zł</span>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        {/* --- EDYCJA ILOŚCI W KOSZYKU --- */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <label>Ilość:</label>
-                          <input
-                            type="number"
-                            min="1"
-                            max={item.Qty}
-                            value={item.count}
-                            onChange={(e) => updateCartQuantity(index, e.target.value)}
-                            style={{ width: '50px', padding: '5px', textAlign: 'left' }}
-                          />
-                        </div>
-
-                        {/* SUMA ZA TEN KONKRETNY TOWAR */}
-                        <span className="cart-item-price">
-                          Razem: {(Number(item.Price) * item.count).toFixed(2)} zł
-                        </span>
-
-                        <button className="remove-btn" onClick={() => removeFromCart(index)}>Usuń</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <div className="cart-summary">
-                  <h3>Do zapłaty: {totalSum.toFixed(2)} zł</h3>
-                  <button className="checkout-btn" onClick={handlePlaceOrder}>
-                    Złóż zamówienie
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <Routes>
+          <Route path="/" element={<div className="products-container">{products.map(p => <ProductCard key={p.Id} product={p} />)}</div>} />
+          <Route path="/cart" element={<CartView />} />
+          <Route path="/orders" element={<Orders />} />
+        </Routes>
       </main>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return <ShopProvider><Router><AppContent /></Router></ShopProvider>;
+}
