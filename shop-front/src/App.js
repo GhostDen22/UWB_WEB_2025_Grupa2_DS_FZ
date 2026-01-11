@@ -233,7 +233,7 @@ function App() {
                             max={item.Qty}
                             value={item.count}
                             onChange={(e) => updateCartQuantity(index, e.target.value)}
-                            style={{ width: '50px', padding: '5px', textAlign: 'center' }}
+                            style={{ width: '50px', padding: '5px', textAlign: 'left' }}
                           />
                         </div>
 
