@@ -103,18 +103,12 @@ app.get('/products/:id', async (req, res) => {
 // --- POST ---
 app.post('/orders', async (req, res) => {
     const cart = req.body; 
-
-    const db = await dbAdapter.JSONFilePreset('db.json', {
-        products: [], orders: []
-    });
+    const db = await dbAdapter.JSONFilePreset('db.json', { products: [], orders: [] });
 
     for (const cartItem of cart) {
         const productInDb = db.data.products.find(p => p.Id === cartItem.Id);
-        
         if (!productInDb || productInDb.Qty < cartItem.count) {
-            return res.status(400).json({ 
-                error: `Brak towaru: ${cartItem.Name}. Dostępne tylko: ${productInDb ? productInDb.Qty : 0}` 
-            });
+            return res.status(400).json({ error: `Brak towaru: ${cartItem.Name}` });
         }
     }
 
@@ -123,16 +117,24 @@ app.post('/orders', async (req, res) => {
         productInDb.Qty -= cartItem.count; 
     }
 
+    const orderedProducts = cart.map(item => ({
+        Id: item.Id,
+        Name: item.Name,
+        Description: item.Description,
+        Image: item.Image,
+        Price: item.Price,
+        Qty: item.count 
+    }));
+
     const newOrder = {
         id: crypto.randomUUID(), 
         date: new Date().toISOString(), 
         status: "new", 
         totalPrice: Number(cart.reduce((sum, item) => sum + (Number(item.Price) * item.count), 0).toFixed(2)),
-        products: cart 
+        products: orderedProducts
     };
 
     db.data.orders.push(newOrder);
-
     await db.write();
 
     res.json({ message: "Zamówienie przyjęte", orderId: newOrder.id });
