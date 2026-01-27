@@ -24,12 +24,23 @@ export const ShopProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('shop-orders', JSON.stringify(orders));
   }, [orders]);
+  
+  const fetchProducts = async ({ name = "", price_sort = "" } = {}) => {
+    try {
+      const params = new URLSearchParams();
+      if (price_sort) params.set("price_sort", price_sort);
+      if (name && name.trim()) params.set("name", name.trim());
 
-  const fetchProducts = () => {
-    fetch('http://localhost:5000/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error('Błąd pobierania:', err));
+      const url = `http://localhost:5000/products?${params.toString()}`;
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      console.error('Błąd pobierania:', err);
+    }
   };
 
   useEffect(() => {
@@ -105,7 +116,9 @@ export const ShopProvider = ({ children }) => {
 
         setCart([]);
         localStorage.removeItem('shopping-cart');
+
         fetchProducts();
+
         if (onSuccess) onSuccess();
       })
       .catch(err => alert(err.message));
@@ -113,9 +126,17 @@ export const ShopProvider = ({ children }) => {
 
   return (
     <ShopContext.Provider value={{
-      products, cart, notification, orders,
-      addToCart, updateCartQuantity, removeFromCart,
-      handlePlaceOrder, totalSum, totalItemsCount
+      products,
+      cart,
+      notification,
+      orders,
+      addToCart,
+      updateCartQuantity,
+      removeFromCart,
+      handlePlaceOrder,
+      totalSum,
+      totalItemsCount,
+      fetchProducts
     }}>
       {children}
     </ShopContext.Provider>

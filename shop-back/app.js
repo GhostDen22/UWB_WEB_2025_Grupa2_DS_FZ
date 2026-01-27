@@ -20,21 +20,85 @@ app.get('/products', async (req, res) => {
         products: [], orders: []
     });
     
-    const databaseTables = db.data;
-    const products = databaseTables.products
+    let products = db.data.products;
+    
+    const { name, price_sort, _page, _limit } = req.query; 
 
-    res.send(products)
-})
+    if (name) {
+        products = products.filter(p => 
+            p.Name.toLowerCase().includes(name.toLowerCase())
+        );
+    }
+
+    if (price_sort) {
+        if (price_sort === 'asc') {
+            products.sort((a, b) => a.Price - b.Price);
+        } else if (price_sort === 'desc') {
+            products.sort((a, b) => b.Price - a.Price);
+        }
+    }
+
+    const page = parseInt(_page) || 1;
+    const limit = parseInt(_limit) || 10;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = products.length;
+
+    const paginatedProducts = products.slice(startIndex, endIndex);
+
+    res.set('X-Total-Count', totalCount);
+    res.set('Access-Control-Expose-Headers', 'X-Total-Count');
+
+    res.send(paginatedProducts);
+});
 
 app.get('/orders', async (req, res) => {
     const db = await dbAdapter.JSONFilePreset('db.json', {
         products: [], orders: []
     });
     
-    const orders = db.data.orders;
+    let orders = [...db.data.orders];
+    
+    const { date_sort, _page, _limit } = req.query;
 
-    res.send(orders);
-})
+    if (date_sort) {
+        if (date_sort === 'asc') {
+            orders.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (date_sort === 'desc') {
+            orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+    }
+
+    const page = parseInt(_page) || 1;
+    const limit = parseInt(_limit) || 10;
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const totalCount = orders.length;
+
+    const paginatedOrders = orders.slice(startIndex, endIndex);
+
+    res.set('X-Total-Count', totalCount);
+    res.set('Access-Control-Expose-Headers', 'X-Total-Count');
+
+    res.send(paginatedOrders);
+});
+
+app.get('/products/:id', async (req, res) => {
+    const db = await dbAdapter.JSONFilePreset('db.json', { products: [], orders: [] });
+    const id = parseInt(req.params.id);
+    
+    const product = db.data.products.find(p => p.Id === id);
+
+    if (product) {
+        res.send(product);
+    } else {
+        res.status(404).send({ error: "Produkt nie znaleziony" });
+    }
+});
 
 // --- POST ---
 app.post('/orders', async (req, res) => {

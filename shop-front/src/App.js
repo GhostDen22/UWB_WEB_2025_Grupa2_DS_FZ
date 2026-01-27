@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { ShopProvider, useShop } from './ShopContext';
+import ProductFilters from "./ProductFilters";
 import './style.css';
 
 const ProductCard = ({ product }) => {
@@ -165,7 +166,7 @@ const CartView = () => {
 };
 
 function AppContent() {
-  const { notification, totalItemsCount, products } = useShop();
+  const { notification, totalItemsCount, products, fetchProducts } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -196,7 +197,11 @@ function AppContent() {
 
         </div>
       </header>
-
+      {!isCart && !isOrders && (
+        <div className="filters-row">
+          <ProductFilters onApply={fetchProducts} />
+        </div>
+      )}
       <main className="main-content">
         <Routes>
           <Route path="/" element={<div className="products-container">{products.map(p => <ProductCard key={p.Id} product={p} />)}</div>} />
